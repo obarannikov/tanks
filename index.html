@@ -198,25 +198,34 @@
             function drawMap(time)
             {
                 world.refresh();
+                if (dir) player.move(dir);
                 player.draw();
                 window.requestAnimationFrame(drawMap);
             }
 
             drawMap();
 
+            var dir = '';
+
+            window.onkeyup = function() {
+
+                dir = '';
+
+            }
+
             window.onkeydown = function(key) {
                 switch(key.keyCode) {
                     case 38:
-                        player.move('Up');
+                        dir = 'Up';
                     break;
                     case 39:
-                        player.move('Right');
+                        dir = 'Right';
                     break;
                     case 40:
-                        player.move('Down');
+                        dir = 'Down';
                     break;
                     case 37:
-                        player.move('Left');
+                        dir = 'Left';
                     break;
                 }
 
