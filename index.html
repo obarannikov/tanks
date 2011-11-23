@@ -179,17 +179,47 @@
                        [0, 0, 0, 1, 0, 0, 0, 5, 0, 0],
                        [1, 1, 0, 2, 1, 1, 1, 2, 1, 1]]
                         
-            drawMap();
+            if (!window.requestAnimationFrame) {
+
+                window.requestAnimationFrame = ( function() {
+
+                    return window.webkitRequestAnimationFrame ||
+                    window.mozRequestAnimationFrame ||
+                    window.oRequestAnimationFrame ||
+                    window.msRequestAnimationFrame ||
+                    function( /* function FrameRequestCallback */ callback, /* DOMElement Element */ element ) {
+                        window.setTimeout( callback, 1000 / 60 );
+                    };
+
+                } )();
+
+            }
 
             function drawMap(time)
             {
                 world.refresh();
                 player.draw();
-                window.webkitRequestAnimationFrame(drawMap);
+                window.requestAnimationFrame(drawMap);
             }
 
+            drawMap();
+
             window.onkeydown = function(key) {
-                player.move(key.keyIdentifier);
+                switch(key.keyCode) {
+                    case 38:
+                        player.move('Up');
+                    break;
+                    case 39:
+                        player.move('Right');
+                    break;
+                    case 40:
+                        player.move('Down');
+                    break;
+                    case 37:
+                        player.move('Left');
+                    break;
+                }
+
             }
 
         </script>
