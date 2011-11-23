@@ -1,0 +1,185 @@
+    <!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <canvas id="gameCanvas" width="240" height="240" />
+        
+        <script>
+
+            var player = {
+
+                canvas: null,
+                direction: 0,
+                image: new Image(),
+                _x: 50,
+                _y: 50,
+
+                calcPos: function() {
+
+                    var p = [];
+                    p[1] = {
+                        x:Math.floor((this._x - 11) / 24),
+                        y:Math.floor((this._y - 11) / 24)
+                    },
+                    p[2] = {
+                        x:Math.floor((this._x) / 24),
+                        y:Math.floor((this._y - 11) / 24)
+                    };
+                    p[3] = {
+                        x:Math.floor((this._x + 12) / 24),
+                        y:Math.floor((this._y - 11) / 24)
+                    };
+                    p[4] = {
+                        x:Math.floor((this._x + 12) / 24),
+                        y:Math.floor((this._y) / 24)
+                    };
+                    p[5] = {
+                        x:Math.floor((this._x + 12) / 24),
+                        y:Math.floor((this._y + 12) / 24)
+                    };
+                    p[6] = {
+                        x:Math.floor((this._x) / 24),
+                        y:Math.floor((this._y + 12) / 24)
+                    };
+                    p[7] = {
+                        x:Math.floor((this._x - 11) / 24),
+                        y:Math.floor((this._y + 12) / 24)
+                    };
+                    p[8] = {
+                        x:Math.floor((this._x - 11) / 24),
+                        y:Math.floor((this._y) / 24)
+                    };
+
+                    for (idx in p) {
+
+                        this.canvas.strokeStyle = '#F00';
+                        this.canvas.strokeRect(p[idx].x * 24, p[idx].y * 24, 24, 24);
+
+                    }
+
+                },
+
+                move: function(dir) {
+                    switch(dir) {
+                        case 'Up':
+                            this.direction = Math.PI * 1.5;
+                            this._y -= 1;
+                        break;
+                        case 'Down':
+                            this.direction = Math.PI / 2;
+                            this._y += 1;
+                        break;
+                        case 'Left':
+                            this.direction = Math.PI;
+                            this._x -= 1;
+                        break;
+                        case 'Right':
+                            this.direction = 0;
+                            this._x += 1;
+                        break;
+                    }
+                },
+                load: function() {
+                    this.image.src = './graphics/tank.png'
+                },
+                draw: function() {
+                    this.canvas.translate(this._x, this._y);
+                    this.canvas.rotate(this.direction);
+                    this.canvas.drawImage(this.image, -12, -12, 24, 24);
+                    this.canvas.rotate(-this.direction);
+                    this.canvas.translate(-this._x, -this._y);
+                }
+
+            }
+
+            var world = {
+
+                canvas: null,
+                map: null,
+                refresh: function() {
+                    for (y in this.map) {
+                        for (x in this.map[y]) {
+                            switch (this.map[y][x]) {
+                                case 0 :
+                                    this.canvas.fillStyle = '#000';
+                                    this.canvas.fillRect(x*24, y* 24, 24, 24);
+                                break;
+                                case 1 :
+                                    this.canvas.drawImage(bricks, x*24, y* 24, 24, 24);
+                                break;
+                                case 2 :
+                                    this.canvas.drawImage(wall, x*24, y* 24, 24, 24);
+                                break;
+                                case 3 :
+                                    this.canvas.drawImage(water, x*24, y* 24, 24, 24);
+                                break;
+                                case 4 :
+                                    this.canvas.drawImage(trees, x*24, y* 24, 24, 24);
+                                break;
+                                case 5 :
+                                    this.canvas.drawImage(ice, x*24, y* 24, 24, 24);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+
+            var canvas = document.getElementById('gameCanvas');
+            var context = canvas.getContext('2d');
+            
+            
+            /* Images */
+            var wall = new Image();
+            var water = new Image();
+            var trees = new Image();
+            var bricks = new Image();
+            var ice = new Image();
+
+            bricks.src = "./graphics/bricks.png";
+            wall.src = "./graphics/wall.png";
+            water.src = "./graphics/water.png";
+            trees.src = "./graphics/trees.png";
+            ice.src = "./graphics/ice.png";
+            player.canvas = context;
+            player.load();
+            
+            /* Fill canvas with black */
+            
+            context.fillStyle = '#000';
+            context.fillRect(0, 0, 240, 240);
+            
+            /* Draw Map */
+
+            world.canvas = context;
+            world.map = [[1, 1, 1, 4, 0, 0, 1, 1, 0, 0],
+                       [1, 0, 1, 4, 1, 0, 1, 2, 0, 1],
+                       [1, 0, 1, 4, 1, 0, 1, 2, 0, 1],
+                       [1, 0, 0, 0, 0, 1, 1, 1, 0, 1],
+                       [1, 3, 3, 1, 0, 4, 4, 5, 0, 0],
+                       [3, 0, 0, 1, 0, 1, 1, 5, 0, 0],
+                       [1, 0, 0, 0, 0, 1, 1, 5, 0, 0],
+                       [1, 1, 0, 1, 0, 1, 0, 5, 0, 0],
+                       [0, 0, 0, 1, 0, 0, 0, 5, 0, 0],
+                       [1, 1, 0, 2, 1, 1, 1, 2, 1, 1]]
+                        
+            drawMap();
+
+            function drawMap(time)
+            {
+                world.refresh();
+                player.draw();
+                player.calcPos();
+                window.webkitRequestAnimationFrame(drawMap);
+            }
+
+            window.onkeydown = function(key) {
+                player.move(key.keyIdentifier);
+            }
+
+        </script>
+    </body>
+</html>
