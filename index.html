@@ -12,51 +12,56 @@
                 canvas: null,
                 direction: 0,
                 image: new Image(),
-                _x: 50,
-                _y: 50,
+                _x: 35,
+                _y: 36,
 
-                calcPos: function() {
+                calcPos: function(x, y) {
 
                     var p = [];
                     p[1] = {
-                        x:Math.floor((this._x - 11) / 24),
-                        y:Math.floor((this._y - 11) / 24)
+                        x:Math.floor((x - 11) / 24),
+                        y:Math.floor((y - 11) / 24)
                     },
                     p[2] = {
-                        x:Math.floor((this._x) / 24),
-                        y:Math.floor((this._y - 11) / 24)
+                        x:Math.floor((x) / 24),
+                        y:Math.floor((y - 11) / 24)
                     };
                     p[3] = {
-                        x:Math.floor((this._x + 12) / 24),
-                        y:Math.floor((this._y - 11) / 24)
+                        x:Math.floor((x + 12) / 24),
+                        y:Math.floor((y - 11) / 24)
                     };
                     p[4] = {
-                        x:Math.floor((this._x + 12) / 24),
-                        y:Math.floor((this._y) / 24)
+                        x:Math.floor((x + 12) / 24),
+                        y:Math.floor((y) / 24)
                     };
                     p[5] = {
-                        x:Math.floor((this._x + 12) / 24),
-                        y:Math.floor((this._y + 12) / 24)
+                        x:Math.floor((x + 12) / 24),
+                        y:Math.floor((y + 12) / 24)
                     };
                     p[6] = {
-                        x:Math.floor((this._x) / 24),
-                        y:Math.floor((this._y + 12) / 24)
+                        x:Math.floor((x) / 24),
+                        y:Math.floor((y + 12) / 24)
                     };
                     p[7] = {
-                        x:Math.floor((this._x - 11) / 24),
-                        y:Math.floor((this._y + 12) / 24)
+                        x:Math.floor((x - 11) / 24),
+                        y:Math.floor((y + 12) / 24)
                     };
                     p[8] = {
-                        x:Math.floor((this._x - 11) / 24),
-                        y:Math.floor((this._y) / 24)
+                        x:Math.floor((x - 11) / 24),
+                        y:Math.floor((y) / 24)
                     };
 
                     for (idx in p) {
 
-                        this.canvas.strokeStyle = '#F00';
-                        this.canvas.strokeRect(p[idx].x * 24, p[idx].y * 24, 24, 24);
+                        if ((world.map[p[idx].y][p[idx].x] != 0)&&(world.map[p[idx].y][p[idx].x] != 4)&&(world.map[p[idx].y][p[idx].x] != 5)) {
+
+                            return false;
+
+                        }
 
                     }
+
+                    return true;
 
                 },
 
@@ -64,19 +69,27 @@
                     switch(dir) {
                         case 'Up':
                             this.direction = Math.PI * 1.5;
-                            this._y -= 1;
+                            if (player.calcPos(this._x, this._y - 1)) {
+                                this._y -= 1;
+                            }
                         break;
                         case 'Down':
                             this.direction = Math.PI / 2;
-                            this._y += 1;
+                            if (player.calcPos(this._x, this._y + 1)) {
+                                this._y += 1;
+                            }
                         break;
                         case 'Left':
                             this.direction = Math.PI;
-                            this._x -= 1;
+                            if (player.calcPos(this._x - 1, this._y)) {
+                                this._x -= 1;
+                            }
                         break;
                         case 'Right':
                             this.direction = 0;
-                            this._x += 1;
+                            if (player.calcPos(this._x + 1, this._y)) {
+                                this._x += 1;
+                            }
                         break;
                     }
                 },
@@ -172,7 +185,6 @@
             {
                 world.refresh();
                 player.draw();
-                player.calcPos();
                 window.webkitRequestAnimationFrame(drawMap);
             }
 
