@@ -1,9 +1,10 @@
     <!DOCTYPE html>
 <html>
     <head>
+        <script src="./code/sprite.js"></script>
     </head>
     <body>
-        <canvas id="gameCanvas" width="240" height="240" />
+        <canvas id="gameCanvas" width="800" height="600" />
         
         <script>
 
@@ -12,46 +13,50 @@
                 canvas: null,
                 direction: 0,
                 image: new Image(),
-                _x: 35,
-                _y: 36,
+                _x: 50,
+                _y: 50,
+                size: 11,
 
                 calcPos: function(x, y) {
 
                     var p = [];
                     p[1] = {
-                        x:Math.floor((x - 11) / 24),
-                        y:Math.floor((y - 11) / 24)
+                        x:Math.floor((x - this.size) / world.tileSize),
+                        y:Math.floor((y - this.size) / world.tileSize)
                     },
                     p[2] = {
-                        x:Math.floor((x) / 24),
-                        y:Math.floor((y - 11) / 24)
+                        x:Math.floor((x) / world.tileSize),
+                        y:Math.floor((y - this.size) / world.tileSize)
                     };
                     p[3] = {
-                        x:Math.floor((x + 12) / 24),
-                        y:Math.floor((y - 11) / 24)
+                        x:Math.floor((x + this.size) / world.tileSize),
+                        y:Math.floor((y - this.size) / world.tileSize)
                     };
                     p[4] = {
-                        x:Math.floor((x + 12) / 24),
-                        y:Math.floor((y) / 24)
+                        x:Math.floor((x + this.size) / world.tileSize),
+                        y:Math.floor((y) / world.tileSize)
                     };
                     p[5] = {
-                        x:Math.floor((x + 12) / 24),
-                        y:Math.floor((y + 12) / 24)
+                        x:Math.floor((x + this.size) / world.tileSize),
+                        y:Math.floor((y + this.size) / world.tileSize)
                     };
                     p[6] = {
-                        x:Math.floor((x) / 24),
-                        y:Math.floor((y + 12) / 24)
+                        x:Math.floor((x) / world.tileSize),
+                        y:Math.floor((y + this.size) / world.tileSize)
                     };
-                    p[7] = {
-                        x:Math.floor((x - 11) / 24),
-                        y:Math.floor((y + 12) / 24)
+                    p[this.size] = {
+                        x:Math.floor((x - this.size) / world.tileSize),
+                        y:Math.floor((y + this.size) / world.tileSize)
                     };
                     p[8] = {
-                        x:Math.floor((x - 11) / 24),
-                        y:Math.floor((y) / 24)
+                        x:Math.floor((x - this.size) / world.tileSize),
+                        y:Math.floor((y) / world.tileSize)
                     };
 
                     for (idx in p) {
+
+                        player.canvas.strokeStyle = '#F00';
+                        player.canvas.strokeRect(p[idx].x * world.tileSize, p[idx].y * world.tileSize, world.tileSize, world.tileSize);
 
                         if ((world.map[p[idx].y][p[idx].x] != 0)&&(world.map[p[idx].y][p[idx].x] != 4)&&(world.map[p[idx].y][p[idx].x] != 5)) {
 
@@ -99,7 +104,7 @@
                 draw: function() {
                     this.canvas.translate(this._x, this._y);
                     this.canvas.rotate(this.direction);
-                    this.canvas.drawImage(this.image, -12, -12, 24, 24);
+                    this.canvas.drawImage(this.image, -17, -17, 33, 33);
                     this.canvas.rotate(-this.direction);
                     this.canvas.translate(-this._x, -this._y);
                 }
@@ -109,6 +114,7 @@
             var world = {
 
                 canvas: null,
+                tileSize: 33,
                 map: null,
                 refresh: function() {
                     for (y in this.map) {
@@ -116,22 +122,22 @@
                             switch (this.map[y][x]) {
                                 case 0 :
                                     this.canvas.fillStyle = '#000';
-                                    this.canvas.fillRect(x*24, y* 24, 24, 24);
+                                    this.canvas.fillRect(x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
                                 break;
                                 case 1 :
-                                    this.canvas.drawImage(bricks, x*24, y* 24, 24, 24);
+                                    this.canvas.drawImage(bricks, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
                                 break;
                                 case 2 :
-                                    this.canvas.drawImage(wall, x*24, y* 24, 24, 24);
+                                    this.canvas.drawImage(wall.texture, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
                                 break;
                                 case 3 :
-                                    this.canvas.drawImage(water, x*24, y* 24, 24, 24);
+                                    this.canvas.drawImage(water, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
                                 break;
                                 case 4 :
-                                    this.canvas.drawImage(trees, x*24, y* 24, 24, 24);
+                                    this.canvas.drawImage(trees, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
                                 break;
                                 case 5 :
-                                    this.canvas.drawImage(ice, x*24, y* 24, 24, 24);
+                                    this.canvas.drawImage(ice, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
                                 break;
                             }
                         }
@@ -146,14 +152,13 @@
             
             
             /* Images */
-            var wall = new Image();
+            var wall = new Sprite('./graphics/wall.png');
             var water = new Image();
             var trees = new Image();
             var bricks = new Image();
             var ice = new Image();
 
             bricks.src = "./graphics/bricks.png";
-            wall.src = "./graphics/wall.png";
             water.src = "./graphics/water.png";
             trees.src = "./graphics/trees.png";
             ice.src = "./graphics/ice.png";
@@ -163,7 +168,7 @@
             /* Fill canvas with black */
             
             context.fillStyle = '#000';
-            context.fillRect(0, 0, 240, 240);
+            context.fillRect(0, 0, 10 * world.tileSize, 10 * world.tileSize);
             
             /* Draw Map */
 
