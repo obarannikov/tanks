@@ -11,6 +11,7 @@ function Sprite(img) {
     this.y = 0;
     this.w = 0;
     this.h = 0;
+    this.angle = 0;
 
     this.loaded = false;
 
@@ -31,7 +32,11 @@ function Sprite(img) {
 
         if (self.loaded) {
 
-            canvas.drawImage(self.texture, self.x, self.y);
+            canvas.translate(self.x, self.y);
+            canvas.rotate(self.angle);
+            canvas.drawImage(self.texture, -self.w / 2, -self.h / 2);
+            canvas.rotate(-self.angle);
+            canvas.translate(-self.x, -self.y);
 
         }
 

@@ -2,6 +2,8 @@
 <html>
     <head>
         <script src="./code/sprite.js"></script>
+        <script src="./code/player.js"></script>
+        <script src="./code/tilemapworld.js"></script>
     </head>
     <body>
         <canvas id="gameCanvas" width="800" height="600" />
@@ -150,7 +152,14 @@
             var canvas = document.getElementById('gameCanvas');
             var context = canvas.getContext('2d');
             
-            
+
+            var TMWorld = new TileMapWorld(context);
+            var player1 = new Player(TMWorld);
+            player1.setPosition(50, 50);
+            var player2 = new Player(TMWorld);
+            player2.setPosition(280, 50);
+
+
             /* Images */
             var wall = new Sprite('./graphics/wall.png');
             var water = new Image();
@@ -203,35 +212,51 @@
             function drawMap(time)
             {
                 world.refresh();
-                if (dir) player.move(dir);
-                player.draw();
+                if (dir1) player1.move(dir1);
+                if (dir2) player2.move(dir2);
+                player1.draw();
+                player2.draw();
                 window.requestAnimationFrame(drawMap);
             }
 
             drawMap();
 
-            var dir = '';
+            var dir1 = '';
+            var dir2 = '';
 
             window.onkeyup = function() {
 
-                dir = '';
+                dir1 = '';
+                dir2 = '';
 
             }
 
             window.onkeydown = function(key) {
                 switch(key.keyCode) {
                     case 38:
-                        dir = 'Up';
+                        dir1 = 'Up';
                     break;
                     case 39:
-                        dir = 'Right';
+                        dir1 = 'Right';
                     break;
                     case 40:
-                        dir = 'Down';
+                        dir1 = 'Down';
                     break;
                     case 37:
-                        dir = 'Left';
+                        dir1 = 'Left';
                     break;
+                    case 87:
+                        dir2 = 'Up';
+                        break;
+                    case 83:
+                        dir2 = 'Down';
+                        break;
+                    case 65:
+                        dir2 = 'Left';
+                        break;
+                    case 68:
+                        dir2 = 'Right';
+                        break;
                 }
 
             }
