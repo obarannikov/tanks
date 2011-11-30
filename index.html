@@ -3,6 +3,7 @@
     <head>
         <script src="./code/sprite.js"></script>
         <script src="./code/player.js"></script>
+        <script src="./code/bullet.js"></script>
         <script src="./code/tilemapworld.js"></script>
     </head>
     <body>
@@ -159,6 +160,7 @@
             var player2 = new Player(TMWorld);
             player2.setPosition(280, 50);
 
+            var bullet1 = new Bullet(TMWorld);
 
             /* Images */
             var wall = new Sprite('./graphics/wall.png');
@@ -182,17 +184,19 @@
             /* Draw Map */
 
             world.canvas = context;
-            world.map = [[1, 1, 1, 4, 0, 0, 1, 1, 0, 0],
-                       [1, 0, 1, 4, 1, 0, 1, 2, 0, 1],
+            world.map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                       [1, 0, 1, 4, 4, 0, 4, 4, 0, 1],
                        [1, 0, 1, 4, 1, 0, 1, 2, 0, 1],
                        [1, 0, 0, 0, 0, 1, 1, 1, 0, 1],
-                       [1, 3, 3, 1, 0, 4, 4, 5, 0, 0],
-                       [3, 0, 0, 1, 0, 1, 1, 5, 0, 0],
-                       [1, 0, 0, 0, 0, 1, 1, 5, 0, 0],
-                       [1, 1, 0, 1, 0, 1, 0, 5, 0, 0],
-                       [0, 0, 0, 1, 0, 0, 0, 5, 0, 0],
-                       [1, 1, 0, 2, 1, 1, 1, 2, 1, 1]]
-                        
+                       [1, 3, 3, 1, 0, 4, 4, 5, 0, 1],
+                       [1, 0, 0, 1, 0, 1, 1, 5, 0, 1],
+                       [1, 0, 0, 0, 0, 1, 1, 5, 0, 1],
+                       [1, 1, 0, 1, 0, 1, 0, 5, 0, 1],
+                       [1, 0, 0, 1, 0, 0, 0, 5, 0, 1],
+                       [1, 1, 1, 2, 1, 1, 1, 2, 1, 1]]
+
+            TMWorld.map = world.map;
+
             if (!window.requestAnimationFrame) {
 
                 window.requestAnimationFrame = ( function() {
@@ -216,6 +220,7 @@
                 if (dir2) player2.move(dir2);
                 player1.draw();
                 player2.draw();
+                bullet1.draw();
                 window.requestAnimationFrame(drawMap);
             }
 
@@ -223,16 +228,26 @@
 
             var dir1 = '';
             var dir2 = '';
+            var lastDir1 = '';
 
-            window.onkeyup = function() {
+            window.onkeyup = function(key) {
 
-                dir1 = '';
-                dir2 = '';
+                if (key.keyCode == 38 || key.keyCode == 39 || key.keyCode == 40 || key.keyCode == 37) {
+                    dir1 = '';
+                }
+                if (key.keyCode == 87 || key.keyCode == 83 || key.keyCode == 65 || key.keyCode == 68) {
+                    dir2 = '';
+                }
 
             }
 
             window.onkeydown = function(key) {
                 switch(key.keyCode) {
+                    case 32:
+                        bullet1.setPosition(player1._x, player1._y);
+                        bullet1.direction = lastDir1;
+                        bullet1.visible = true;
+                        break;
                     case 38:
                         dir1 = 'Up';
                     break;
@@ -258,6 +273,8 @@
                         dir2 = 'Right';
                         break;
                 }
+
+                lastDir1 = dir1;
 
             }
 
