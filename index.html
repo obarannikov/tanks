@@ -1,283 +1,303 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-    <head>
-        <script src="./code/sprite.js"></script>
-        <script src="./code/player.js"></script>
-        <script src="./code/bullet.js"></script>
-        <script src="./code/tilemapworld.js"></script>
-    </head>
-    <body>
-        <canvas id="gameCanvas" width="800" height="600" />
-        
-        <script>
+<head>
+    <script src="./code/sprite.js"></script>
+    <script src="./code/player.js"></script>
+    <script src="./code/bullet.js"></script>
+    <script src="./code/tilemapworld.js"></script>
+</head>
+<body>
+    <h2>S`n`R Tanks - beta</h2>
+    <canvas id="gameCanvas" width="330" height="330"></canvas>
+    <div>
+        <h3>Controls:</h3>
+        <b>Player 1:</b>
+        <ul>
+            <li>Up - Arrow Up</li>
+            <li>Down - Arrow Down</li>
+            <li>Left - Arrow Left</li>
+            <li>Right - Arrow Right</li>
+            <li>Shoot - Space</li>
+        </ul>
+        <b>Player 2:</b>
+        <ul>
+            <li>Up - W</li>
+            <li>Down - S</li>
+            <li>Left - A</li>
+            <li>Right - D</li>
+            <li>Shoot - N/A</li>
+        <ul>
+    </div>
+    <script>
 
-            var player = {
+        var player = {
 
-                canvas: null,
-                direction: 0,
-                image: new Image(),
-                _x: 50,
-                _y: 50,
-                size: 11,
+            canvas: null,
+            direction: 0,
+            image: new Image(),
+            _x: 50,
+            _y: 50,
+            size: 11,
 
-                calcPos: function(x, y) {
+            calcPos: function(x, y) {
 
-                    var p = [];
-                    p[1] = {
-                        x:Math.floor((x - this.size) / world.tileSize),
-                        y:Math.floor((y - this.size) / world.tileSize)
-                    },
-                    p[2] = {
-                        x:Math.floor((x) / world.tileSize),
-                        y:Math.floor((y - this.size) / world.tileSize)
-                    };
-                    p[3] = {
-                        x:Math.floor((x + this.size) / world.tileSize),
-                        y:Math.floor((y - this.size) / world.tileSize)
-                    };
-                    p[4] = {
-                        x:Math.floor((x + this.size) / world.tileSize),
-                        y:Math.floor((y) / world.tileSize)
-                    };
-                    p[5] = {
-                        x:Math.floor((x + this.size) / world.tileSize),
-                        y:Math.floor((y + this.size) / world.tileSize)
-                    };
-                    p[6] = {
-                        x:Math.floor((x) / world.tileSize),
-                        y:Math.floor((y + this.size) / world.tileSize)
-                    };
-                    p[this.size] = {
-                        x:Math.floor((x - this.size) / world.tileSize),
-                        y:Math.floor((y + this.size) / world.tileSize)
-                    };
-                    p[8] = {
-                        x:Math.floor((x - this.size) / world.tileSize),
-                        y:Math.floor((y) / world.tileSize)
-                    };
+                var p = [];
+                p[1] = {
+                    x:Math.floor((x - this.size) / world.tileSize),
+                    y:Math.floor((y - this.size) / world.tileSize)
+                },
+                p[2] = {
+                    x:Math.floor((x) / world.tileSize),
+                    y:Math.floor((y - this.size) / world.tileSize)
+                };
+                p[3] = {
+                    x:Math.floor((x + this.size) / world.tileSize),
+                    y:Math.floor((y - this.size) / world.tileSize)
+                };
+                p[4] = {
+                    x:Math.floor((x + this.size) / world.tileSize),
+                    y:Math.floor((y) / world.tileSize)
+                };
+                p[5] = {
+                    x:Math.floor((x + this.size) / world.tileSize),
+                    y:Math.floor((y + this.size) / world.tileSize)
+                };
+                p[6] = {
+                    x:Math.floor((x) / world.tileSize),
+                    y:Math.floor((y + this.size) / world.tileSize)
+                };
+                p[this.size] = {
+                    x:Math.floor((x - this.size) / world.tileSize),
+                    y:Math.floor((y + this.size) / world.tileSize)
+                };
+                p[8] = {
+                    x:Math.floor((x - this.size) / world.tileSize),
+                    y:Math.floor((y) / world.tileSize)
+                };
 
-                    for (idx in p) {
+                for (idx in p) {
 
-                        player.canvas.strokeStyle = '#F00';
-                        player.canvas.strokeRect(p[idx].x * world.tileSize, p[idx].y * world.tileSize, world.tileSize, world.tileSize);
+                    player.canvas.strokeStyle = '#F00';
+                    player.canvas.strokeRect(p[idx].x * world.tileSize, p[idx].y * world.tileSize, world.tileSize, world.tileSize);
 
-                        if ((world.map[p[idx].y][p[idx].x] != 0)&&(world.map[p[idx].y][p[idx].x] != 4)&&(world.map[p[idx].y][p[idx].x] != 5)) {
+                    if ((world.map[p[idx].y][p[idx].x] != 0)&&(world.map[p[idx].y][p[idx].x] != 4)&&(world.map[p[idx].y][p[idx].x] != 5)) {
 
-                            return false;
+                        return false;
 
+                    }
+
+                }
+
+                return true;
+
+            },
+
+            move: function(dir) {
+                switch(dir) {
+                    case 'Up':
+                        this.direction = Math.PI * 1.5;
+                        if (player.calcPos(this._x, this._y - 1)) {
+                            this._y -= 1;
                         }
-
-                    }
-
-                    return true;
-
-                },
-
-                move: function(dir) {
-                    switch(dir) {
-                        case 'Up':
-                            this.direction = Math.PI * 1.5;
-                            if (player.calcPos(this._x, this._y - 1)) {
-                                this._y -= 1;
-                            }
-                        break;
-                        case 'Down':
-                            this.direction = Math.PI / 2;
-                            if (player.calcPos(this._x, this._y + 1)) {
-                                this._y += 1;
-                            }
-                        break;
-                        case 'Left':
-                            this.direction = Math.PI;
-                            if (player.calcPos(this._x - 1, this._y)) {
-                                this._x -= 1;
-                            }
-                        break;
-                        case 'Right':
-                            this.direction = 0;
-                            if (player.calcPos(this._x + 1, this._y)) {
-                                this._x += 1;
-                            }
-                        break;
-                    }
-                },
-                load: function() {
-                    this.image.src = './graphics/tank.png'
-                },
-                draw: function() {
-                    this.canvas.translate(this._x, this._y);
-                    this.canvas.rotate(this.direction);
-                    this.canvas.drawImage(this.image, -17, -17, 33, 33);
-                    this.canvas.rotate(-this.direction);
-                    this.canvas.translate(-this._x, -this._y);
+                    break;
+                    case 'Down':
+                        this.direction = Math.PI / 2;
+                        if (player.calcPos(this._x, this._y + 1)) {
+                            this._y += 1;
+                        }
+                    break;
+                    case 'Left':
+                        this.direction = Math.PI;
+                        if (player.calcPos(this._x - 1, this._y)) {
+                            this._x -= 1;
+                        }
+                    break;
+                    case 'Right':
+                        this.direction = 0;
+                        if (player.calcPos(this._x + 1, this._y)) {
+                            this._x += 1;
+                        }
+                    break;
                 }
-
+            },
+            load: function() {
+                this.image.src = './graphics/tank.png'
+            },
+            draw: function() {
+                this.canvas.translate(this._x, this._y);
+                this.canvas.rotate(this.direction);
+                this.canvas.drawImage(this.image, -17, -17, 33, 33);
+                this.canvas.rotate(-this.direction);
+                this.canvas.translate(-this._x, -this._y);
             }
 
-            var world = {
+        }
 
-                canvas: null,
-                tileSize: 33,
-                map: null,
-                refresh: function() {
-                    for (y in this.map) {
-                        for (x in this.map[y]) {
-                            switch (this.map[y][x]) {
-                                case 0 :
-                                    this.canvas.fillStyle = '#000';
-                                    this.canvas.fillRect(x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
-                                break;
-                                case 1 :
-                                    this.canvas.drawImage(bricks, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
-                                break;
-                                case 2 :
-                                    this.canvas.drawImage(wall.texture, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
-                                break;
-                                case 3 :
-                                    this.canvas.drawImage(water, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
-                                break;
-                                case 4 :
-                                    this.canvas.drawImage(trees, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
-                                break;
-                                case 5 :
-                                    this.canvas.drawImage(ice, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
-                                break;
-                            }
+        var world = {
+
+            canvas: null,
+            tileSize: 33,
+            map: null,
+            refresh: function() {
+                for (y in this.map) {
+                    for (x in this.map[y]) {
+                        switch (this.map[y][x]) {
+                            case 0 :
+                                this.canvas.fillStyle = '#000';
+                                this.canvas.fillRect(x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
+                            break;
+                            case 1 :
+                                this.canvas.drawImage(bricks, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
+                            break;
+                            case 2 :
+                                this.canvas.drawImage(wall.texture, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
+                            break;
+                            case 3 :
+                                this.canvas.drawImage(water, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
+                            break;
+                            case 4 :
+                                this.canvas.drawImage(trees, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
+                            break;
+                            case 5 :
+                                this.canvas.drawImage(ice, x*world.tileSize, y* world.tileSize, world.tileSize, world.tileSize);
+                            break;
                         }
                     }
                 }
-
             }
 
+        }
 
-            var canvas = document.getElementById('gameCanvas');
-            var context = canvas.getContext('2d');
-            
 
-            var TMWorld = new TileMapWorld(context);
-            var player1 = new Player(TMWorld);
-            player1.setPosition(50, 50);
-            var player2 = new Player(TMWorld);
-            player2.setPosition(280, 50);
+        var canvas = document.getElementById('gameCanvas');
+        var context = canvas.getContext('2d');
 
-            var bullet1 = new Bullet(TMWorld);
 
-            /* Images */
-            var wall = new Sprite('./graphics/wall.png');
-            var water = new Image();
-            var trees = new Image();
-            var bricks = new Image();
-            var ice = new Image();
+        var TMWorld = new TileMapWorld(context);
+        var player1 = new Player(TMWorld);
+        player1.setPosition(50, 50);
+        var player2 = new Player(TMWorld);
+        player2.setPosition(280, 50);
 
-            bricks.src = "./graphics/bricks.png";
-            water.src = "./graphics/water.png";
-            trees.src = "./graphics/trees.png";
-            ice.src = "./graphics/ice.png";
-            player.canvas = context;
-            player.load();
-            
-            /* Fill canvas with black */
-            
-            context.fillStyle = '#000';
-            context.fillRect(0, 0, 10 * world.tileSize, 10 * world.tileSize);
-            
-            /* Draw Map */
+        var bullet1 = new Bullet(TMWorld);
 
-            world.canvas = context;
-            world.map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                       [1, 0, 1, 4, 4, 0, 4, 4, 0, 1],
-                       [1, 0, 1, 4, 1, 0, 1, 2, 0, 1],
-                       [1, 0, 0, 0, 0, 1, 1, 1, 0, 1],
-                       [1, 3, 3, 1, 0, 4, 4, 5, 0, 1],
-                       [1, 0, 0, 1, 0, 1, 1, 5, 0, 1],
-                       [1, 0, 0, 0, 0, 1, 1, 5, 0, 1],
-                       [1, 1, 0, 1, 0, 1, 0, 5, 0, 1],
-                       [1, 0, 0, 1, 0, 0, 0, 5, 0, 1],
-                       [1, 1, 1, 2, 1, 1, 1, 2, 1, 1]]
+        /* Images */
+        var wall = new Sprite('./graphics/wall.png');
+        var water = new Image();
+        var trees = new Image();
+        var bricks = new Image();
+        var ice = new Image();
 
-            TMWorld.map = world.map;
+        bricks.src = "./graphics/bricks.png";
+        water.src = "./graphics/water.png";
+        trees.src = "./graphics/trees.png";
+        ice.src = "./graphics/ice.png";
+        player.canvas = context;
+        player.load();
 
-            if (!window.requestAnimationFrame) {
+        /* Fill canvas with black */
 
-                window.requestAnimationFrame = ( function() {
+        context.fillStyle = '#000';
+        context.fillRect(0, 0, 10 * world.tileSize, 10 * world.tileSize);
 
-                    return window.webkitRequestAnimationFrame ||
-                    window.mozRequestAnimationFrame ||
-                    window.oRequestAnimationFrame ||
-                    window.msRequestAnimationFrame ||
-                    function( /* function FrameRequestCallback */ callback, /* DOMElement Element */ element ) {
-                        window.setTimeout( callback, 1000 / 60 );
-                    };
+        /* Draw Map */
 
-                } )();
+        world.canvas = context;
+        world.map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 0, 1, 4, 4, 0, 4, 4, 0, 1],
+                   [1, 0, 1, 4, 1, 0, 1, 2, 0, 1],
+                   [1, 0, 0, 0, 0, 1, 1, 1, 0, 1],
+                   [1, 3, 3, 1, 0, 4, 4, 5, 0, 1],
+                   [1, 0, 0, 1, 0, 1, 1, 5, 0, 1],
+                   [1, 0, 0, 0, 0, 1, 1, 5, 0, 1],
+                   [1, 1, 0, 1, 0, 1, 0, 5, 0, 1],
+                   [1, 0, 0, 1, 0, 0, 0, 5, 0, 1],
+                   [1, 1, 1, 2, 1, 1, 1, 2, 1, 1]]
 
+        TMWorld.map = world.map;
+
+        if (!window.requestAnimationFrame) {
+
+            window.requestAnimationFrame = ( function() {
+
+                return window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                function( /* function FrameRequestCallback */ callback, /* DOMElement Element */ element ) {
+                    window.setTimeout( callback, 1000 / 60 );
+                };
+
+            } )();
+
+        }
+
+        function drawMap(time)
+        {
+            world.refresh();
+            if (dir1) player1.move(dir1);
+            if (dir2) player2.move(dir2);
+            player1.draw();
+            player2.draw();
+            bullet1.draw();
+            window.requestAnimationFrame(drawMap);
+        }
+
+        drawMap();
+
+        var dir1 = '';
+        var dir2 = '';
+        var lastDir1 = '';
+
+        window.onkeyup = function(key) {
+
+            if (key.keyCode == 38 || key.keyCode == 39 || key.keyCode == 40 || key.keyCode == 37) {
+                dir1 = '';
+            }
+            if (key.keyCode == 87 || key.keyCode == 83 || key.keyCode == 65 || key.keyCode == 68) {
+                dir2 = '';
             }
 
-            function drawMap(time)
-            {
-                world.refresh();
-                if (dir1) player1.move(dir1);
-                if (dir2) player2.move(dir2);
-                player1.draw();
-                player2.draw();
-                bullet1.draw();
-                window.requestAnimationFrame(drawMap);
-            }
+        }
 
-            drawMap();
-
-            var dir1 = '';
-            var dir2 = '';
-            var lastDir1 = '';
-
-            window.onkeyup = function(key) {
-
-                if (key.keyCode == 38 || key.keyCode == 39 || key.keyCode == 40 || key.keyCode == 37) {
-                    dir1 = '';
-                }
-                if (key.keyCode == 87 || key.keyCode == 83 || key.keyCode == 65 || key.keyCode == 68) {
-                    dir2 = '';
-                }
-
-            }
-
-            window.onkeydown = function(key) {
-                switch(key.keyCode) {
-                    case 32:
-                        bullet1.setPosition(player1._x, player1._y);
-                        bullet1.direction = lastDir1;
-                        bullet1.visible = true;
-                        break;
-                    case 38:
-                        dir1 = 'Up';
+        window.onkeydown = function(key) {
+            switch(key.keyCode) {
+                case 32:
+                    bullet1.setPosition(player1._x, player1._y);
+                    bullet1.direction = lastDir1;
+                    bullet1.visible = true;
                     break;
-                    case 39:
-                        dir1 = 'Right';
+                case 38:
+                    dir1 = 'Up';
+                break;
+                case 39:
+                    dir1 = 'Right';
+                break;
+                case 40:
+                    dir1 = 'Down';
+                break;
+                case 37:
+                    dir1 = 'Left';
+                break;
+                case 87:
+                    dir2 = 'Up';
                     break;
-                    case 40:
-                        dir1 = 'Down';
+                case 83:
+                    dir2 = 'Down';
                     break;
-                    case 37:
-                        dir1 = 'Left';
+                case 65:
+                    dir2 = 'Left';
                     break;
-                    case 87:
-                        dir2 = 'Up';
-                        break;
-                    case 83:
-                        dir2 = 'Down';
-                        break;
-                    case 65:
-                        dir2 = 'Left';
-                        break;
-                    case 68:
-                        dir2 = 'Right';
-                        break;
-                }
-
-                lastDir1 = dir1;
-
+                case 68:
+                    dir2 = 'Right';
+                    break;
             }
 
-        </script>
-    </body>
+            lastDir1 = dir1;
+
+        }
+
+    </script>
+
+</body>
 </html>
